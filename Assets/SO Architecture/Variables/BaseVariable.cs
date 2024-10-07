@@ -98,8 +98,27 @@ namespace ScriptableObjectArchitecture
         protected T _maxClampedValue = default(T);
         [SerializeField]
         protected T _defaultValue;
-        
+
         private T _oldValue;
+
+        public virtual T SetValueDontRaise(T newValue)
+        {
+            if (_readOnly)
+            {
+                RaiseReadonlyWarning();
+                return _value;
+            }
+            else if(Clampable && IsClamped)
+            {
+                newValue = ClampValue(newValue);
+            }
+
+            _value = newValue;
+
+            _oldValue = _value;
+
+            return newValue;
+        }
 
         public virtual T SetValue(BaseVariable<T> value)
         {
